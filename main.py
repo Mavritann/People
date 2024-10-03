@@ -1,5 +1,5 @@
 import os
-from datetime import date, datetime, timedelta
+from datetime import date, timedelta
 from human import Human
 
 start_date = date.today() # сегодняшняя стартовая дата
@@ -22,7 +22,6 @@ for item in range(100):  # цикл, создающий людей и добав
     else:
         women += 1
 
-
 def one_day():  # функция, которая увеличивает время на 1 день
     global current_date, population, dead, men, women, avr_death_age, avr_death_men_age, avr_death_women_age, max_age
     current_date += timedelta(days=1)
@@ -39,10 +38,10 @@ def one_day():  # функция, которая увеличивает врем
             else:
                 women -= 1
         if pers.ck == ["yes"]:
-            new = Human(current_date)
-            population.append(new)
+            new_born = Human(current_date)
+            population.append(new_born)
 
-            if new.sex == "man":
+            if new_born.sex == "man":
                 men += 1
             else:
                 women += 1
@@ -69,14 +68,14 @@ def one_day():  # функция, которая увеличивает врем
 
     print(f"{len(population)} alives: {men} men, {women} women")
     print(f"Average age: {round(avr_age, 2)}")
-    print(f"Max age: {max_age}")
+    print(f"Max current age: {max_age}")
     print(f"Total dead: {len(dead)}, men: {dead_men}, women: {dead_women}")
     print(f"Average death age: {round(avr_death_age, 2)}, men: {round(avr_death_men_age, 2)}, women: {round(avr_death_women_age, 2)}")
-
+    print(f"Total resourses: {round(Human.resourses)}, average: {round(Human.resourses / len(population), 2)}")
 
 while len(population) > 0:  # цикл, считает дни
     one_day()
-#    time.sleep(0.00001) # задержка в секундах
+    #time.sleep(0.0001) # задержка в секундах
 
 passed_time = (current_date - start_date).days  # вычисляем пройденное время
 print()
@@ -84,13 +83,7 @@ print(f"{passed_time} days passed.")
 print()
 
 sorted_dead = sorted(dead, key=lambda human: human.age)  # сортируем умерших по возрасту
-for pers in sorted_dead[-10:]:  # выводим 10 самых старых умерших
-    print(pers.birth_date, pers.sex, pers.ymd_age(), pers.alive[0], pers.dead_date)
+for deads in sorted_dead[-10:]:  # выводим 10 самых старых умерших
+    print(deads.birth_date, deads.sex, deads.ymd_age(), deads.alive[0], deads.dead_date)
 
-for pers in dead:
-    children += pers.children
-
-print(f"Average age of death: {round(avr_death_age, 3)}, men: {round(avr_death_men_age, 3)}, women: {round(avr_death_women_age, 3)}"
-)
-print(f"Total born children: {children}")
-print(Human.birth_age)  # проверка возраста рождения детей
+print(f"Average age of death: {round(avr_death_age, 3)}, men: {round(avr_death_men_age, 3)}, women: {round(avr_death_women_age, 3)}")
