@@ -27,6 +27,7 @@ def one_day():  # функция, которая увеличивает врем
     current_date += timedelta(days=1)
     os.system("cls")  # очистка консоли
     print(current_date)
+    
     for pers in population:  # цикл, выводящий информацию о людях
         pers.one_day_later()
         pers.ymd_age()
@@ -46,32 +47,37 @@ def one_day():  # функция, которая увеличивает врем
             else:
                 women += 1
 
-        if len(population) > 0:
-            avr_age = (sum([pers.age for pers in population]) / len(population) / 365)  # средний возраст
-        else:
-            avr_age = 0
+    if len(population) > 0:
+        avr_age = sum([pers.age for pers in population]) / len(population) / 365 # средний возраст
         max_age = round(max([pers.age for pers in population]) / 365, 2)
+        avr_res = round (Human.resourses / len(population), 2)  
+    else:
+        avr_age, max_age, avr_res = 0, 0, 0
+            
+    dead_men, dead_women = 0, 0
+    for pers in dead:
+        if pers.sex == "man":
+            dead_men += 1
+        else:
+            dead_women += 1
 
-        dead_men, dead_women = 0, 0
-        for pers in dead:
-            if pers.sex == "man":
-                dead_men += 1
-            else:
-                dead_women += 1
-
-        if len(dead) > 0:  # средний возраст смерти
-            avr_death_age = sum([pers.age for pers in dead]) / len(dead) / 365
-        if dead_men > 0:
-            avr_death_men_age = (sum([pers.age for pers in dead if pers.sex == "man"]) / dead_men / 365)
-        if dead_women > 0:
-            avr_death_women_age = (sum([pers.age for pers in dead if pers.sex == "woman"])/ dead_women / 365)
+    if len(dead) > 0:  # средний возраст смерти
+        avr_death_age = sum([pers.age for pers in dead]) / len(dead) / 365
+    if dead_men > 0:
+        avr_death_men_age = (sum([pers.age for pers in dead if pers.sex == "man"]) / dead_men / 365)
+    if dead_women > 0:
+        avr_death_women_age = (sum([pers.age for pers in dead if pers.sex == "woman"])/ dead_women / 365)
+        
+    Human.avr_resourses = avr_res
+    # Human.res_correction() # корректировка популяции
 
     print(f"{len(population)} alives: {men} men, {women} women")
     print(f"Average age: {round(avr_age, 2)}")
     print(f"Max current age: {max_age}")
     print(f"Total dead: {len(dead)}, men: {dead_men}, women: {dead_women}")
     print(f"Average death age: {round(avr_death_age, 2)}, men: {round(avr_death_men_age, 2)}, women: {round(avr_death_women_age, 2)}")
-    print(f"Total resourses: {round(Human.resourses)}, average: {round(Human.resourses / len(population), 2)}")
+    print(f"Total resourses: {round(Human.resourses)}, average: {avr_res}")
+    print(f"The average number of children: {Human.born_k}, death factor: {Human.death_k}")
 
 while len(population) > 0:  # цикл, считает дни
     one_day()
