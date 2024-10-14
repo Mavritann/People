@@ -48,9 +48,10 @@ class Human:
     def is_alive(self): # функция жизни, проверяет жив ли человек
         if self.sex == "man":
             death_factor = (self.man_k*self.death_k**self.years) / 365
+            self.alive = random.choices(["alive", "dead"], weights = [0.97, death_factor])
         elif self.sex == "woman":
             death_factor = (self.woman_k*self.death_k**self.years) / 365 # вероятность умереть в этот день
-        self.alive = random.choices(["alive", "dead"], weights = [0.97, death_factor])
+            self.alive = random.choices(["alive", "dead"], weights = [0.97, death_factor])
         self.dead_date = self.birth_date + timedelta(days = self.age)	
 
     def is_mother(self): # функция рождения детей
@@ -72,7 +73,7 @@ class Human:
         else:
             Human.resourses -= 3
 
-    def res_correction(self):
+    def res_correction(self): # функция коррекции в зависимости от ресурсов
         Human.born_k = round(Human.avr_resourses * 0.0012, 3)
         if Human.born_k > 7:
             Human.born_k = 7
@@ -84,4 +85,4 @@ class Human:
         elif Human.avr_resourses >= 0:
             Human.death_k = round(-0.000011 * Human.avr_resourses + 1.097, 4)
         else:
-            Human.death_k = 1.12
+            Human.death_k = 1.3

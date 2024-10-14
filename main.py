@@ -1,5 +1,7 @@
 import os
+import random
 from datetime import date, timedelta
+from event import Event
 from human import Human
 
 start_date = date.today() # сегодняшняя стартовая дата
@@ -12,6 +14,9 @@ men = 0
 women = 0
 children = 0
 avr_death_age, avr_death_men_age, avr_death_women_age, max_age = 0, 0, 0, 0
+new_event = None
+event_chance = [False]
+event_days = 0
 
 for item in range(100):  # цикл, создающий людей и добавляющий их в список
     new = Human(current_date)
@@ -23,7 +28,7 @@ for item in range(100):  # цикл, создающий людей и добав
         women += 1
 
 def one_day():  # функция, которая увеличивает время на 1 день
-    global current_date, population, dead, men, women, avr_death_age, avr_death_men_age, avr_death_women_age, max_age
+    global current_date, population, dead, men, women, avr_death_age, avr_death_men_age, avr_death_women_age, max_age, new_event, event_chance, event_days
     current_date += timedelta(days=1)
     os.system("cls")  # очистка консоли
     print(current_date)
@@ -78,10 +83,23 @@ def one_day():  # функция, которая увеличивает врем
     print(f"Average death age: {round(avr_death_age, 2)}, men: {round(avr_death_men_age, 2)}, women: {round(avr_death_women_age, 2)}")
     print(f"Total resourses: {round(Human.resourses)}, average: {avr_res}")
     print(f"The average number of children: {Human.born_k}, death factor: {Human.death_k}")
+    
+    if event_chance == [False]:
+        event_chance = random.choices([True, False], weights = [1, 365]) # вызов случайного события
+        if event_chance == [True]:
+            new_event = Event()
+            new_event.random_event(current_date)
+            event_days = 0
+            print(new_event)               
+    elif event_chance == [True]:
+        event_days += 1
+        print(f"{new_event.name} Days: {event_days}")
+        if event_days == new_event.time.days:
+            event_chance = [False]
 
 while len(population) > 0:  # цикл, считает дни
     one_day()
-    #time.sleep(0.0001) # задержка в секундах
+    #time.sleep(0.01) # задержка в секундах
 
 passed_time = (current_date - start_date).days  # вычисляем пройденное время
 print()
