@@ -11,6 +11,8 @@ class Human:
     death_k = 1.075 # увеличение шанса умереть за год
     man_job = 6 # добыча ресурсов мужичной за 1 день
     woman_job = 3.5 # добыча ресурсов женщиной за 1 день
+    child_spend = 2 # трата ресурсов ребенком за 1 день
+    adult_spend = 3 # трата ресурсов взрослым за 1 день
 
     def __init__(self, current_date): 
         start = date(1950, 1, 1)
@@ -43,7 +45,6 @@ class Human:
             self.is_mother()
             self.mine_resourses()
             self.spend_resourses()
-            self.res_correction()
             
     def is_alive(self): # функция жизни, проверяет жив ли человек
         if self.sex == "man":
@@ -69,20 +70,26 @@ class Human:
             
     def spend_resourses(self): # функция траты ресурсов
         if self.years < 15:
-            Human.resourses -= 2
+            Human.resourses -= Human.child_spend
         else:
-            Human.resourses -= 3
+            Human.resourses -= Human.adult_spend
 
     def res_correction(self): # функция коррекции в зависимости от ресурсов
         Human.born_k = round(Human.avr_resourses * 0.0012, 3)
         if Human.born_k > 7:
             Human.born_k = 7
-        if Human.resourses < 0:
+        Human.child_spend = round(Human.avr_resourses * 0.001, 2)
+        Human.adult_spend = round(Human.avr_resourses * 0.0015, 2)
+        Human.man_job= round(Human.avr_resourses * 0.003, 2)
+        Human.woman_job= round(Human.avr_resourses * 0.00175, 2)
+        if Human.resourses <= 0:
             Human.born_k = 0
-        
+        if Human.resourses <= 500:
+            Human.child_spend,  Human.adult_spend = 0.5, 0.75
+            
         if Human.avr_resourses >= 2000:
             Human.death_k = round(40 / Human.avr_resourses + 1.055, 4)
         elif Human.avr_resourses >= 0:
             Human.death_k = round(-0.000011 * Human.avr_resourses + 1.097, 4)
         else:
-            Human.death_k = 1.3
+            Human.death_k = 1.25
