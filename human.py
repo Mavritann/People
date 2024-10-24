@@ -78,15 +78,19 @@ class Human:
         Human.born_k = round(Human.avr_resourses * 0.0012, 3)
         if Human.born_k > 7:
             Human.born_k = 7
-        Human.child_spend = round(Human.avr_resourses * 0.001, 2)
-        Human.adult_spend = round(Human.avr_resourses * 0.0015, 2)
+        if Human.avr_resourses <= 0:
+            Human.born_k = 0
+            
         Human.man_job= round(Human.avr_resourses * 0.003, 2)
         Human.woman_job= round(Human.avr_resourses * 0.00175, 2)
-        if Human.resourses <= 0:
-            Human.born_k = 0
-        if Human.resourses <= 500:
-            Human.child_spend,  Human.adult_spend = 0.5, 0.75
-            
+           
+        if Human.avr_resourses <= 500:
+            Human.child_spend = 0.5
+            Human.adult_spend = 0.75
+        else:
+            Human.child_spend = round(Human.avr_resourses * 0.001, 2)
+            Human.adult_spend = round(Human.avr_resourses * 0.0015, 2)
+  
         if Human.avr_resourses >= 2000:
             Human.death_k = round(40 / Human.avr_resourses + 1.055, 4)
         elif Human.avr_resourses >= 0:

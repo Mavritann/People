@@ -67,30 +67,30 @@ def one_day():  # функция, которая увеличивает врем
     if len(population) > 0:
         avr_age = sum([pers.age for pers in population]) / len(population) / 365 # средний возраст
         max_age = round(max([pers.age for pers in population]) / 365, 2)
-        avr_res = round (Human.resourses / len(population), 2)  
+        Human.avr_resourses = round (Human.resourses / len(population), 2)  
     else:
-        avr_age, max_age, avr_res = 0, 0, 0
-    
-    Human.res_correction(Human) # корректировка популяции  
-    Human.avr_resourses = avr_res
+        avr_age, max_age, Human.avr_resourses = 0, 0, 0
 
     print(f"{len(population)} alives: {men} men, {women} women")
     print(f"Average age: {round(avr_age, 2)}")
     print(f"Max current age: {max_age}")
     print(f"Total dead: {len(dead)}, men: {dead_men}, women: {dead_women}")
     print(f"Average death age: {round(avr_death_age, 2)}, men: {round(avr_death_men_age, 2)}, women: {round(avr_death_women_age, 2)}")
-    print(f"Total resourses: {round(Human.resourses)}, average: {avr_res}")
+    print(f"Total resourses: {round(Human.resourses)}, average: {Human.avr_resourses}")
     print(f"The average number of children: {Human.born_k}, death factor: {Human.death_k}")
     print(f"Male mining: {Human.man_job}, female mining: {Human.woman_job}, child spending: {Human.child_spend}, adult spending: {Human.adult_spend}")
-    
+
+    Human.res_correction(Human) # корректировка популяции 
+        
     if event_chance == [False]:
-        event_chance = random.choices([True, False], weights = [1, 1800]) # вызов случайного события
+        event_chance = random.choices([True, False], weights = [1, 180]) # вызов случайного события
         if event_chance == [True]:
             new_event = Event()
             new_event.random_event(current_date)
             event_days = 0             
     elif event_chance == [True]:
         event_days += 1
+        new_event.type()
         print(f"{new_event.name} Days: {event_days}, {new_event.end_date}")
         if event_days == new_event.time.days:
             event_chance = [False]
