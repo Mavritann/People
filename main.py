@@ -81,6 +81,7 @@ def one_day():  # функция, которая увеличивает врем
     print(f"Male mining: {Human.man_job}, female mining: {Human.woman_job}, child spending: {Human.child_spend}, adult spending: {Human.adult_spend}")
 
     Human.res_correction(Human) # корректировка популяции 
+    Human.incident_death = 0
         
     if event_chance == [False]:
         event_chance = random.choices([True, False], weights = [1, 180]) # вызов случайного события
@@ -106,6 +107,6 @@ print()
 
 sorted_dead = sorted(dead, key=lambda human: human.age)  # сортируем умерших по возрасту
 for deads in sorted_dead[-10:]:  # выводим 10 самых старых умерших
-    print(deads.birth_date, deads.sex, deads.ymd_age(), deads.alive[0], deads.dead_date)
+    print(deads.birth_date, deads.sex, deads.ymd_age(), deads.dead_date)
 
-print(f"Average age of death: {round(avr_death_age, 3)}, men: {round(avr_death_men_age, 3)}, women: {round(avr_death_women_age, 3)}")
+print(f"Average age of death: {round(avr_death_age, 2)}, men: {round(avr_death_men_age, 2)}, women: {round(avr_death_women_age, 2)}")
