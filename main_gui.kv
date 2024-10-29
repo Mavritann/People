@@ -1,0 +1,144 @@
+<OutputLabel@Label>
+    font_size: 20
+    size_hint: 1, 0.25
+    text_size:self.size
+    halign: "left"
+    valign: "middle"
+    
+<InputLabel@Label>
+    font_size: 20
+    size_hint: 1, 1
+    text_size:self.size
+    halign: "left"
+    valign: "middle"
+    
+<StyleInput@TextInput>
+    size_hint: 0.5, 1
+    font_size: 22
+    multiline: False
+    padding: [5, (self.height-self.line_height)/2]  
+
+<MyLayout>
+    
+    BoxLayout:
+        orientation: "vertical"
+        size: root.width, root.height
+        padding: 20
+
+        Label:
+            id: title_label
+            size_hint: 1, 0.4
+            text: "Population of People"
+            font_size: 45
+            
+        GridLayout:
+            cols: 2
+            padding: 10
+            spacing: 10
+
+            InputLabel:
+                text: "Start number of people"
+            
+            StyleInput:
+                id: population_input
+                text: "100"
+                input_type: "number"
+                
+            InputLabel:
+                text: "Start date of birth"
+            
+            StyleInput:
+                id: start_date_input
+                text: "01.01.1950"
+                input_type: "datetime"
+                
+            InputLabel:
+                text: "End date of birth"
+            
+            StyleInput:
+                id: end_date_input
+                text: "Today"
+                
+            InputLabel:
+                text: "Start resourses"
+            
+            StyleInput:
+                id: resourses_input
+                text: "200000"
+                input_type: "number"
+                
+        Button:
+            id: start_button
+            text: "Start"
+            font_size: 40
+            size_hint: 0.5, 0.35
+            pos_hint:{"center_x":0.5,"center_y":1}
+            background_normal: ""
+            background_color: (0.25, 0.25, 0.25, 1)
+            on_press: root.start()
+       
+        OutputLabel:
+            id: date_label
+            text: ""
+            
+        OutputLabel:
+            id: alives_label
+            text: ""
+            
+        OutputLabel:
+            id: age_label
+            text: ""
+            
+        OutputLabel:
+            id: dead_label
+            text: ""
+            
+        OutputLabel:
+            id: death_age_label
+            text: ""
+            
+        OutputLabel:
+            id: resourses_label
+            text: ""
+            
+        OutputLabel:
+            id: factors_label
+            text: ""
+            
+        OutputLabel:
+            id: job_label
+            text: ""
+            
+        OutputLabel:
+            id: event_label
+            text: ""
+
+        OutputLabel:
+            id: end_label
+            text: ""
+
+        BoxLayout:
+            orientation: "horizontal"
+            size: root.width, root.height
+            spacing: 30
+
+            Button:
+                id: old_button
+                text: "The most old"
+                font_size: 25
+                size_hint: 0.5, 0.25
+                background_normal: ""
+                background_color: (0, 0, 0, 0)
+                color: (1, 1, 1, 0)
+                on_press: root.old()
+
+            Button:
+                id: young_button
+                text: "The most young"
+                font_size: 25
+                size_hint: 0.5, 0.25
+                background_normal: ""
+                background_color: (0, 0, 0, 0)
+                color: (1, 1, 1, 0)
+                on_press: root.young()
+    

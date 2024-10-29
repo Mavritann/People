@@ -12,7 +12,6 @@ population = []  # живые люди
 dead = []  # умершие люди
 men = 0
 women = 0
-children = 0
 avr_death_age, avr_death_men_age, avr_death_women_age, max_age = 0, 0, 0, 0
 new_event = None
 event_chance = [False]
@@ -31,7 +30,7 @@ for item in range(100):  # цикл, создающий людей и добав
 
 def one_day():  # функция, которая увеличивает время на 1 день
     global current_date, population, dead, men, women, avr_death_age, avr_death_men_age, avr_death_women_age, max_age, new_event, event_chance, event_days, dead_men, dead_women
-    current_date += timedelta(days=1)
+    current_date += timedelta(days = 1)
     os.system("cls")  # очистка консоли
     print(current_date)
     
