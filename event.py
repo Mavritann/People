@@ -15,12 +15,12 @@ class Event:
         self.start_date = current_date
         self.time = timedelta(days = random.randint(0, 730))
         self.end_date = self.start_date + self.time        
-        self.type = random.choice([self.war,  self.pandemia])#, self.frost, self.harvest, self.baby_boom, self.new_source, self.fire, self.medical_achieve]) # вызов случайной функции
+        self.type = random.choice([self.war,  self.pandemia, self.frost, self.harvest, self.baby_boom, self.new_source, self.fire, self.medical_achieve]) # вызов случайной функции
         self.type()
     # отрицательные факторы
     def war(self):
         self.name = "WAR!"
-        Human.incident_death = 0.1
+        # Human.incident_death = 0.1
         
     def pandemia(self):
         self.name = "PANDEMIA!"

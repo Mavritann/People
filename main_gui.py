@@ -19,8 +19,9 @@ class MyLayout(Widget):
     def __init__(self):
         super().__init__()
         
-        self.start_date = date.today() # сегодняшняя стартовая дата
+        self.start_date = date.today() # текущая стартовая дата
         self.current_date = date.today()  # текущая дата
+        self.ids.end_date_input.text = str(date.today()) # вносит текущую дату в поле
         self.population = []  # живые люди
         self.dead = []  # умершие люди
         self.men = 0
@@ -34,9 +35,16 @@ class MyLayout(Widget):
         self.dead_women = 0
         
     def start(self):
+        # делает поля ввода неактивными пока работает программа
+        self.ids.population_input.readonly = True
+        self.ids.start_date_input.readonly = True
+        self.ids.end_date_input.readonly = True
+        self.ids.resourses_input.readonly = True
+        
+        Human.resourses = int(self.ids.resourses_input.text)
                
         for item in range(int(self.ids.population_input.text)):  # цикл, создающий людей и добавляющий их в список
-            new = Human(self.current_date)
+            new = Human(self.start_date, self.ids.start_date_input.text, self.ids.end_date_input.text)
             self.population.append(new)
             item += 1
             if new.sex == "man":
@@ -80,7 +88,7 @@ class MyLayout(Widget):
                             self.avr_death_women_age = sum([pers.age for pers in self.dead if pers.sex == "woman"]) / self.dead_women / 365
 
                 if pers.ck == ["yes"]: # рождение нового человека
-                    new_born = Human(self.current_date)
+                    new_born = Human(self.current_date, "", "")
                     self.population.append(new_born)
                     if new_born.sex == "man":
                         self.men += 1
@@ -99,11 +107,12 @@ class MyLayout(Widget):
             self.ids.dead_label.text = f"Total dead: {len(self.dead)}, men: {self.dead_men}, women: {self.dead_women}"
             self.ids.death_age_label.text = f"Average death age: {round(self.avr_death_age, 2)}, men: {round(self.avr_death_men_age, 2)}, women: {round(self.avr_death_women_age, 2)}"
             self.ids.resourses_label.text = f"Total resourses: {round(Human.resourses)}, average: {Human.avr_resourses}"
-            self.ids.factors_label.text = f"The average number of children: {Human.born_k}, death factor: {Human.death_k}"
-            self.ids.job_label.text = f"Mining: male - {Human.man_job}, female - {Human.woman_job}, spending: child - {Human.child_spend}, adult - {Human.adult_spend}"
-        
-            Human.res_correction(Human) # корректировка популяции 
+            self.ids.factors_label.text = f"The numbers of children: {Human.born_k}, death factor: {Human.death_k}"
+            self.ids.job_label.text = f"Male mining: {Human.man_job}, female mining: {Human.woman_job}"
+            self.ids.spend_label.text = f"Child spending: {Human.child_spend}, adult spending: {Human.adult_spend}"
+
             Human.incident_death = 0
+            Human.res_correction(Human) # корректировка популяции 
                 
             if self.event_chance == [False]: 
                 self.event_chance = random.choices([True, False], weights = [1, 180]) # вызов случайного события
@@ -123,41 +132,35 @@ class MyLayout(Widget):
             passed_time = (self.current_date - self.start_date).days  # вычисляем пройденное время
             self.ids.date_label.text = f"{str(self.current_date)}, {passed_time} days passed."
             
-            Clock.unschedule(self.update_label)            
+            Clock.unschedule(self.update_label)    # окончание цикла   
+            # поля ввода опять становятся активными
+            self.ids.population_input.readonly = False
+            self.ids.start_date_input.readonly = False
+            self.ids.end_date_input.readonly = False
+            self.ids.resourses_input.readonly = False
+     
             self.new_buttons(self.ids.old_button, self.ids.young_button)  
             
-    def old(self):                
-        sorted_dead = sorted(self.dead, key = lambda human: human.age)  # сортируем умерших по возрасту
-        self.ids.date_label.text = "List of the most old humans"       
-        self.ids.alives_label.text = f"{sorted_dead[-1].birth_date}, {sorted_dead[-1].sex}, {sorted_dead[-1].ymd_age()}, {sorted_dead[-1].dead_date}"
-        self.ids.age_label.text = f"{sorted_dead[-2].birth_date}, {sorted_dead[-2].sex}, {sorted_dead[-2].ymd_age()}, {sorted_dead[-2].dead_date}"
-        self.ids.dead_label.text = f"{sorted_dead[-3].birth_date}, {sorted_dead[-3].sex}, {sorted_dead[-3].ymd_age()}, {sorted_dead[-3].dead_date}"
-        self.ids.death_age_label.text = f"{sorted_dead[-4].birth_date}, {sorted_dead[-4].sex}, {sorted_dead[-4].ymd_age()}, {sorted_dead[-4].dead_date}"
-        self.ids.resourses_label.text = f"{sorted_dead[-5].birth_date}, {sorted_dead[-5].sex}, {sorted_dead[-5].ymd_age()}, {sorted_dead[-5].dead_date}"
-        self.ids.factors_label.text = f"{sorted_dead[-6].birth_date}, {sorted_dead[-6].sex}, {sorted_dead[-6].ymd_age()}, {sorted_dead[-6].dead_date}"
-        self.ids.job_label.text = f"{sorted_dead[-7].birth_date}, {sorted_dead[-7].sex}, {sorted_dead[-7].ymd_age()}, {sorted_dead[-7].dead_date}"
-        self.ids.event_label.text = f"{sorted_dead[-8].birth_date}, {sorted_dead[-8].sex}, {sorted_dead[-8].ymd_age()}, {sorted_dead[-8].dead_date}"
-        
+    def old(self):    
+        sorted_dead = sorted(self.dead, key = lambda human: human.age, reverse = True)  # сортируем умерших по возрасту
+        labels_list = [self.ids.alives_label, self.ids.age_label, self.ids.dead_label, 
+                       self.ids.death_age_label, self.ids.resourses_label, self.ids.factors_label, 
+                       self.ids.job_label, self.ids.spend_label, self.ids.event_label]
+        self.ids.date_label.text = "List of the most old humans"
+
+        for dead in sorted_dead[0:9]:
+            labels_list[sorted_dead.index(dead)].text = f"{dead.birth_date}, {dead.sex}, {dead.ymd_age()}, {dead.dead_date}"
+                    
     def young(self):                
         sorted_dead = sorted(self.dead, key = lambda human: human.age)  # сортируем умерших по возрасту
-        # labels_list = [self.ids.alives_label.text, self.ids.age_label.text, 
-        #                self.ids.death_age_label.text, self.ids.death_age_label.text, self.ids.resourses_label.text,
-        #                self.ids.factors_label.text, self.ids.job_label.text, self.ids.event_label.text]
+        labels_list = [self.ids.alives_label, self.ids.age_label, self.ids.dead_label, 
+                       self.ids.death_age_label, self.ids.resourses_label, self.ids.factors_label, 
+                       self.ids.job_label, self.ids.spend_label, self.ids.event_label]
         self.ids.date_label.text = "List of the most young humans"
 
-        # for dead in sorted_dead[0:7]:
-        #     labels_list[sorted_dead.index(dead)] = f"{dead.birth_date}, {dead.sex}, {dead.ymd_age()}, {dead.dead_date}"
-        #     print(labels_list[sorted_dead.index(dead)])
+        for dead in sorted_dead[0:9]:
+            labels_list[sorted_dead.index(dead)].text = f"{dead.birth_date}, {dead.sex}, {dead.ymd_age()}, {dead.dead_date}"
                     
-        self.ids.alives_label.text = f"{sorted_dead[0].birth_date}, {sorted_dead[0].sex}, {sorted_dead[0].ymd_age()}, {sorted_dead[0].dead_date}"
-        self.ids.age_label.text = f"{sorted_dead[1].birth_date}, {sorted_dead[1].sex}, {sorted_dead[1].ymd_age()}, {sorted_dead[1].dead_date}"
-        self.ids.dead_label.text = f"{sorted_dead[2].birth_date}, {sorted_dead[2].sex}, {sorted_dead[2].ymd_age()}, {sorted_dead[2].dead_date}"
-        self.ids.death_age_label.text = f"{sorted_dead[3].birth_date}, {sorted_dead[3].sex}, {sorted_dead[3].ymd_age()}, {sorted_dead[3].dead_date}"
-        self.ids.resourses_label.text = f"{sorted_dead[4].birth_date}, {sorted_dead[4].sex}, {sorted_dead[4].ymd_age()}, {sorted_dead[4].dead_date}"
-        self.ids.factors_label.text = f"{sorted_dead[5].birth_date}, {sorted_dead[5].sex}, {sorted_dead[5].ymd_age()}, {sorted_dead[5].dead_date}"
-        self.ids.job_label.text = f"{sorted_dead[6].birth_date}, {sorted_dead[6].sex}, {sorted_dead[6].ymd_age()}, {sorted_dead[6].dead_date}"
-        self.ids.event_label.text = f"{sorted_dead[7].birth_date}, {sorted_dead[7].sex}, {sorted_dead[7].ymd_age()}, {sorted_dead[7].dead_date}"
-
 class AwesomeApp(App):
     def build(self):
         Window.clearcolor = (0.33, 0.33, 0.33, 1) # цвет

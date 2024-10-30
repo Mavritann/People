@@ -49,7 +49,8 @@
             
             StyleInput:
                 id: start_date_input
-                text: "01.01.1950"
+                text: "1950-01-01"
+                hint_text: "YYYY-MM-DD"
                 input_type: "datetime"
                 
             InputLabel:
@@ -58,6 +59,8 @@
             StyleInput:
                 id: end_date_input
                 text: "Today"
+                hint_text: "YYYY-MM-DD"
+                input_type: "datetime"
                 
             InputLabel:
                 text: "Start resourses"
@@ -110,11 +113,11 @@
             text: ""
             
         OutputLabel:
-            id: event_label
+            id: spend_label
             text: ""
 
         OutputLabel:
-            id: end_label
+            id: event_label
             text: ""
 
         BoxLayout:
@@ -141,4 +144,3 @@
                 background_color: (0, 0, 0, 0)
                 color: (1, 1, 1, 0)
                 on_press: root.young()
-    

@@ -15,10 +15,15 @@ class Human:
     adult_spend = 3 # трата ресурсов взрослым за 1 день
     incident_death = 0 # вероятность смерти от внешнего воздействия
 
-    def __init__(self, current_date): 
-        start = date(1950, 1, 1)
-        end = current_date
-        if current_date == date.today():
+    def __init__(self, current_date, start_birth, end_birth):  
+        
+        if len(start_birth) > 0:
+            start_list = start_birth.split("-") # начало периода из поля ввода
+            start = date(int(start_list[0]), int(start_list[1]), int(start_list[2]))
+        if len(end_birth) > 0:
+            end_list = end_birth.split("-") # конец периода из поля ввода
+            end = date(int(end_list[0]), int(end_list[1]), int(end_list[2]))
+        if current_date <= date.today():
             self.birth_date = start + timedelta(days = random.randint(0, (end - start).days)) 
         else:
             self.birth_date = current_date
@@ -100,4 +105,4 @@ class Human:
         elif Human.avr_resourses >= 0:
             Human.death_k = round(-0.000011 * Human.avr_resourses + 1.097, 4)
         else:
-            Human.death_k = 1.25
+            Human.incident_death = 0.008
