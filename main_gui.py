@@ -33,33 +33,35 @@ class MyLayout(Widget):
         self.event_days = 0
         self.dead_men = 0
         self.dead_women = 0
+        self.first_time = True
         
     def start(self):
         # делает поля ввода неактивными пока работает программа
-        self.ids.population_input.readonly = True
-        self.ids.start_date_input.readonly = True
-        self.ids.end_date_input.readonly = True
-        self.ids.resourses_input.readonly = True
+        if self.first_time == True:
+            self.ids.population_input.readonly = True
+            self.ids.start_date_input.readonly = True
+            self.ids.end_date_input.readonly = True
+            self.ids.resourses_input.readonly = True
         
-        Human.resourses = int(self.ids.resourses_input.text)
+            Human.resourses = int(self.ids.resourses_input.text)
                
-        for item in range(int(self.ids.population_input.text)):  # цикл, создающий людей и добавляющий их в список
-            new = Human(self.start_date, self.ids.start_date_input.text, self.ids.end_date_input.text)
-            self.population.append(new)
-            item += 1
-            if new.sex == "man":
-                self.men += 1
-            else:
-                self.women += 1
+            for item in range(int(self.ids.population_input.text)):  # цикл, создающий людей и добавляющий их в список
+                new = Human(self.start_date, self.ids.start_date_input.text, self.ids.end_date_input.text)
+                self.population.append(new)
+                item += 1
+                if new.sex == "man":
+                    self.men += 1
+                else:
+                    self.women += 1
+        self.first_time = False
                 
-        Clock.schedule_interval(self.update_label, 0.01) # запуск метода с определённой частотой
-        
-    def new_buttons(self, old, young):
-        anim = Animation(background_color = (0.25, 0.25, 0.25, 1), duration = 5)
-        anim &= Animation(color = (1, 1, 1, 1))
-        anim.start(old)
-        anim.start(young)
-     
+        if self.ids.start_button.text == "Start":
+            self.ids.start_button.text = "Pause"
+            Clock.schedule_interval(self.update_label, 0.01) # запуск метода с определённой частотой
+        else:
+            self.ids.start_button.text = "Start"
+            Clock.unschedule(self.update_label)
+             
     def update_label(self, *interval):
         
         if len(self.population) > 0:
@@ -98,7 +100,7 @@ class MyLayout(Widget):
             if len(self.population) > 0:
                 self.avr_age = sum([pers.age for pers in self.population]) / len(self.population) / 365 # средний возраст
                 self.max_age = round(max([pers.age for pers in self.population]) / 365, 2)
-                Human.avr_resourses = round (Human.resourses / len(self.population), 2)  
+                Human.avr_resourses = round (Human.resourses / len(self.population))  
             else:
                 self.avr_age, self.max_age, Human.avr_resourses = 0, 0, 0
                 
@@ -139,7 +141,16 @@ class MyLayout(Widget):
             self.ids.end_date_input.readonly = False
             self.ids.resourses_input.readonly = False
      
-            self.new_buttons(self.ids.old_button, self.ids.young_button)  
+            self.new_buttons(self.ids.old_button, self.ids.young_button) 
+            self.ids.start_button.text = "Start"
+            self.current_date = date.today()
+            self.first_time = True
+            
+    def new_buttons(self, old, young):
+        anim = Animation(background_color = (0.25, 0.25, 0.25, 1), duration = 5)
+        anim &= Animation(color = (1, 1, 1, 1))
+        anim.start(old)
+        anim.start(young)
             
     def old(self):    
         sorted_dead = sorted(self.dead, key = lambda human: human.age, reverse = True)  # сортируем умерших по возрасту
