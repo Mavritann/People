@@ -1,4 +1,6 @@
 import random
+import re
+import time
 from datetime import date, timedelta
 from event import Event
 from human import Human
@@ -42,25 +44,42 @@ class MyLayout(Widget):
             self.ids.start_date_input.readonly = True
             self.ids.end_date_input.readonly = True
             self.ids.resourses_input.readonly = True
-        
+            start, end = None, None    
+            self.dead = []
+            self.ids.event_label.text = "" 
+            
             Human.resourses = int(self.ids.resourses_input.text)
-               
-            for item in range(int(self.ids.population_input.text)):  # цикл, создающий людей и добавляющий их в список
-                new = Human(self.start_date, self.ids.start_date_input.text, self.ids.end_date_input.text)
-                self.population.append(new)
-                item += 1
-                if new.sex == "man":
-                    self.men += 1
+            
+            if re.match(r"[0-9]{4}-(0[1-9]|1[012])-(0[1-9]|1[0-9]|2[0-9]|3[01])", self.ids.start_date_input.text) == None:
+                self.ids.alives_label.text = "Wrong start date!"
+                self.ids.start_date_input.text = "1950-01-01"  
+            else:    
+                start_list = self.ids.start_date_input.text.split("-") # начало периода из поля ввода
+                start = date(int(start_list[0]), int(start_list[1]), int(start_list[2]))
+                      
+                if re.match(r"[0-9]{4}-(0[1-9]|1[012])-(0[1-9]|1[0-9]|2[0-9]|3[01])", self.ids.end_date_input.text) == None:
+                    self.ids.alives_label.text = "Wrong end date!"
+                    self.ids.end_date_input.text = str(date.today())
                 else:
-                    self.women += 1
-        self.first_time = False
+                    end_list = self.ids.end_date_input.text.split("-") # конец периода из поля ввода
+                    end = date(int(end_list[0]), int(end_list[1]), int(end_list[2]))
+    
+                    for item in range(int(self.ids.population_input.text)):  # цикл, создающий людей и добавляющий их в список
+                        new = Human(self.start_date, start, end)
+                        self.population.append(new)
+                        item += 1
+                        if new.sex == "man":
+                            self.men += 1
+                        else:
+                            self.women += 1
                 
         if self.ids.start_button.text == "Start":
             self.ids.start_button.text = "Pause"
-            Clock.schedule_interval(self.update_label, 0.01) # запуск метода с определённой частотой
+            Clock.schedule_interval(self.update_label, 0.005) # запуск метода с определённой частотой
         else:
             self.ids.start_button.text = "Start"
             Clock.unschedule(self.update_label)
+        self.first_time = False
              
     def update_label(self, *interval):
         
@@ -117,7 +136,7 @@ class MyLayout(Widget):
             Human.res_correction(Human) # корректировка популяции 
                 
             if self.event_chance == [False]: 
-                self.event_chance = random.choices([True, False], weights = [1, 180]) # вызов случайного события
+                self.event_chance = random.choices([True, False], weights = [1, 910]) # вызов случайного события
                 if self.event_chance == [True]:
                     self.new_event = Event()
                     self.new_event.random_event(self.current_date)
@@ -126,7 +145,7 @@ class MyLayout(Widget):
                 self.event_days += 1
                 self.new_event.type()
                 self.ids.event_label.text = f"{self.new_event.name} Days: {self.event_days}"
-                if self.event_days == self.new_event.time.days:
+                if self.event_days >= self.new_event.time.days:
                     self.event_chance = [False]  
                     self.ids.event_label.text = ""                
             
@@ -140,9 +159,13 @@ class MyLayout(Widget):
             self.ids.start_date_input.readonly = False
             self.ids.end_date_input.readonly = False
             self.ids.resourses_input.readonly = False
-     
-            self.new_buttons(self.ids.old_button, self.ids.young_button) 
+
+            if len(self.dead) > 0:
+                self.new_buttons(self.ids.old_button, self.ids.young_button) 
             self.ids.start_button.text = "Start"
+            self.dead_men = 0
+            self.dead_women = 0
+            self.event_days = 0
             self.current_date = date.today()
             self.first_time = True
             
