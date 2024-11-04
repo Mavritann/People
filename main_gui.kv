@@ -1,6 +1,6 @@
 <OutputLabel@Label>
     font_size: 20
-    size_hint: 1, 0.25
+    size_hint: 1, 0.2
     text_size:self.size
     halign: "left"
     valign: "middle"
@@ -27,9 +27,9 @@
 
         Label:
             id: title_label
-            size_hint: 1, 0.4
+            size_hint: 1, 0.25
             text: "Population of People"
-            font_size: 45
+            font_size: 40
             
         GridLayout:
             cols: 2
@@ -69,13 +69,22 @@
                 id: resourses_input
                 text: "200000"
                 input_type: "number"
+
+            InputLabel:
+                text: "Events mode"
+
+            Switch:
+                id: event_switch
+                size_hint: 0.5, 1
+                active: True
+                font_size: 20
                 
         Button:
             id: start_button
             text: "Start"
             font_size: 40
-            size_hint: 0.5, 0.35
-            pos_hint:{"center_x":0.5,"center_y":1}
+            size_hint: 0.4, 0.3
+            pos_hint:{"center_x":0.5, "center_y":1}
             background_normal: ""
             background_color: (0.25, 0.25, 0.25, 1)
             on_press: root.start()
@@ -123,13 +132,14 @@
         BoxLayout:
             orientation: "horizontal"
             size: root.width, root.height
-            spacing: 30
-
+            spacing: 10
+            size_hint: 1, 0.5
+            
             Button:
                 id: old_button
                 text: "The most old"
                 font_size: 25
-                size_hint: 0.5, 0.25
+                size_hint: 0.5, 0.5
                 background_normal: ""
                 background_color: (0, 0, 0, 0)
                 color: (1, 1, 1, 0)
@@ -139,7 +149,7 @@
                 id: young_button
                 text: "The most young"
                 font_size: 25
-                size_hint: 0.5, 0.25
+                size_hint: 0.5, 0.5
                 background_normal: ""
                 background_color: (0, 0, 0, 0)
                 color: (1, 1, 1, 0)

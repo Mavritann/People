@@ -1,6 +1,5 @@
 import random
 import re
-import time
 from datetime import date, timedelta
 from event import Event
 from human import Human
@@ -134,20 +133,21 @@ class MyLayout(Widget):
 
             Human.incident_death = 0
             Human.res_correction(Human) # корректировка популяции 
-                
-            if self.event_chance == [False]: 
-                self.event_chance = random.choices([True, False], weights = [1, 910]) # вызов случайного события
-                if self.event_chance == [True]:
-                    self.new_event = Event()
-                    self.new_event.random_event(self.current_date)
-                    self.event_days = 0             
-            elif self.event_chance == [True]:
-                self.event_days += 1
-                self.new_event.type()
-                self.ids.event_label.text = f"{self.new_event.name} Days: {self.event_days}"
-                if self.event_days >= self.new_event.time.days:
-                    self.event_chance = [False]  
-                    self.ids.event_label.text = ""                
+            
+            if self.ids.event_switch.active == True:
+                if self.event_chance == [False]: 
+                    self.event_chance = random.choices([True, False], weights = [1, 910]) # вызов случайного события
+                    if self.event_chance == [True]:
+                        self.new_event = Event()
+                        self.new_event.random_event(self.current_date)
+                        self.event_days = 0             
+                elif self.event_chance == [True]:
+                    self.event_days += 1
+                    self.new_event.type()
+                    self.ids.event_label.text = f"{self.new_event.name} Days: {self.event_days}"
+                    if self.event_days >= self.new_event.time.days:
+                        self.event_chance = [False]  
+                        self.ids.event_label.text = ""                
             
         else: # если все умерли
             passed_time = (self.current_date - self.start_date).days  # вычисляем пройденное время
@@ -175,7 +175,7 @@ class MyLayout(Widget):
         anim.start(old)
         anim.start(young)
             
-    def old(self):    
+    def old(self):    # вывод самых старых
         sorted_dead = sorted(self.dead, key = lambda human: human.age, reverse = True)  # сортируем умерших по возрасту
         labels_list = [self.ids.alives_label, self.ids.age_label, self.ids.dead_label, 
                        self.ids.death_age_label, self.ids.resourses_label, self.ids.factors_label, 
@@ -185,7 +185,7 @@ class MyLayout(Widget):
         for dead in sorted_dead[0:9]:
             labels_list[sorted_dead.index(dead)].text = f"{dead.birth_date}, {dead.sex}, {dead.ymd_age()}, {dead.dead_date}"
                     
-    def young(self):                
+    def young(self):     # вывод самых молодых           
         sorted_dead = sorted(self.dead, key = lambda human: human.age)  # сортируем умерших по возрасту
         labels_list = [self.ids.alives_label, self.ids.age_label, self.ids.dead_label, 
                        self.ids.death_age_label, self.ids.resourses_label, self.ids.factors_label, 
@@ -195,10 +195,10 @@ class MyLayout(Widget):
         for dead in sorted_dead[0:9]:
             labels_list[sorted_dead.index(dead)].text = f"{dead.birth_date}, {dead.sex}, {dead.ymd_age()}, {dead.dead_date}"
                     
-class AwesomeApp(App):
+class PopulationApp(App):
     def build(self):
         Window.clearcolor = (0.33, 0.33, 0.33, 1) # цвет
         return MyLayout()
 
 if __name__ == "__main__":
-    AwesomeApp().run()
+    PopulationApp().run()
